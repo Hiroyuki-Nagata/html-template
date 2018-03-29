@@ -13,9 +13,7 @@
 
   (:require [clojure.java.io :as io]))
 
-(defnk -init [filename])
-
-(defn -toString [this] "Hello")
+(defnk -init [filename {option nil} {path nil} {utf8 nil}])
 
 (defn stream [input]
   (new ANTLRInputStream input))
