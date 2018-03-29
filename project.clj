@@ -7,7 +7,8 @@
                  [clj-antlr/clj-antlr "0.2.4"]
                  [prismatic/plumbing "0.5.5"]
                  [speclj/speclj "3.3.2"]]
-  :main ^:skip-aot jp.gr.java_conf.hangedman.html_template
+  ;;:main ^:skip-aot jp.gr.java_conf.hangedman.html_template
+  :aot [jp.gr.java_conf.hangedman.html_template]
   :target-path "target/%s"
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
