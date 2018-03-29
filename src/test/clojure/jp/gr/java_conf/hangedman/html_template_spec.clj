@@ -6,6 +6,9 @@
    [jp.gr.java_conf.hangedman HtmlTemplate])
   )
 
+;;
+;; ctor
+;;
 (describe "Call new() to create a new Template object"
           (it "will return a instance (with a single template file)"
               (should (instance?
@@ -15,8 +18,11 @@
               (should (instance?
                        HtmlTemplate
                        (new HtmlTemplate {:filename 'test.tmpl'
-                                          :option 'value'}))))
+                                          :option 'value'})))))
 
-          )
+(describe "Call param() return the value set to a param"
+          (it "will return String at least"
+              (let [template (new HtmlTemplate {:filename 'dummy.tmpl'})]
+                (should (= String (type (.param template "")))))))
 
 (run-specs)

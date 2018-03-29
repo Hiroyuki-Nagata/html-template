@@ -2,7 +2,10 @@
   (:gen-class :name jp.gr.java_conf.hangedman.HtmlTemplate
               :init init
               :state state
-              :constructors {[clojure.lang.PersistentArrayMap] []})
+              :constructors {[clojure.lang.PersistentArrayMap] []}
+              :methods [[param [String] String]
+                        ;;[param [clojure.lang.PersistentArrayMap]]
+                        ])
 
   (:import [org.antlr.v4.runtime ANTLRInputStream]
            [org.antlr.v4.runtime CommonTokenStream]
@@ -13,7 +16,27 @@
 
   (:require [clojure.java.io :as io]))
 
+(defmacro setfield
+  [this key value]
+  `(swap! (.state ~this) into {~key ~value}))
+
+(defmacro getfield
+  [this key]
+  `(@(.state ~this) ~key))
+
+;;
+;; ctor
+;;
 (defnk -init [filename {option nil} {path nil} {utf8 nil}])
+
+;;
+;; param
+;;
+(defn -param [this param] "")
+
+
+
+;; -------------------------------------------------------------------------------
 
 (defn stream [input]
   (new ANTLRInputStream input))
