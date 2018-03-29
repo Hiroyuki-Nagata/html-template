@@ -1,10 +1,13 @@
 (ns jp.gr.java_conf.hangedman.html_template
-  (:gen-class)
+  (:gen-class :init init
+              :constructors {[String] []})
 
   (:import [org.antlr.v4.runtime ANTLRInputStream]
            [org.antlr.v4.runtime CommonTokenStream]
            [jp.gr.java_conf.hangedman.html_template HTMLParser]
            [jp.gr.java_conf.hangedman.html_template HTMLLexer])
+
+  (:use [plumbing.core])
 
   (:require [clojure.java.io :as io]))
 
@@ -29,3 +32,5 @@
         parser (html-parser tok)
         ctx (.htmlDocument parser)]
     (println (.toStringTree ctx))))
+
+(defnk -init [filename])
