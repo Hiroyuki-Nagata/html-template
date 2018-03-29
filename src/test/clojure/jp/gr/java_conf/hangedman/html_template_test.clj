@@ -1,4 +1,4 @@
-(ns html-template.core-test
+(ns jp.gr.java_conf.hangedman.html_template_test
   (:require [clojure.test :refer :all]
             [html-template.core :refer :all]))
 

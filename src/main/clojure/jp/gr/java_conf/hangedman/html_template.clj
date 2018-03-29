@@ -1,8 +1,10 @@
-(ns html-template.core
+(ns jp.gr.java_conf.hangedman.html_template
   (:gen-class)
 
-  (:import [org.antlr.v4.runtime ANTLRInputStream CommonTokenStream]
-           [html_template.core HTMLParser HTMLLexer])
+  (:import [org.antlr.v4.runtime ANTLRInputStream]
+           [org.antlr.v4.runtime CommonTokenStream]
+           [jp.gr.java_conf.hangedman.html_template HTMLParser]
+           [jp.gr.java_conf.hangedman.html_template HTMLLexer])
 
   (:require [clojure.java.io :as io]))
 

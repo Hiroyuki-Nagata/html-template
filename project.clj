@@ -1,13 +1,13 @@
 (defproject html-template "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "HTMLTemplate library like Perl's one"
+  :url "https://github.com/Hiroyuki-Nagata/html-template"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [
                  [org.clojure/clojure "1.8.0"]
                  [clj-antlr/clj-antlr "0.2.4"]
                  ]
-  :main ^:skip-aot html-template.core
+  :main ^:skip-aot jp.gr.java_conf.hangedman.html_template
   :target-path "target/%s"
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
@@ -15,7 +15,7 @@
   :resource-paths ["src/main/resources"]
   :plugins [[lein-antlr "0.3.0"]]
   :antlr-src-dir "src/main/antlr"
-  :antlr-dest-dir "src/main/java"
-  :antlr-options { :package "html_template.core"}
+  :antlr-dest-dir "src/main/java/jp/gr/java_conf/hangedman/html_template"
+  :antlr-options { :package "jp.gr.java_conf.hangedman.html_template"}
   :profiles {:uberjar {:aot :all}}
   )
