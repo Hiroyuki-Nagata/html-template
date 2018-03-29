@@ -4,15 +4,16 @@
               :state state
               :constructors {[clojure.lang.PersistentArrayMap] []}
               :methods [[param [String] String]
-                        ;;[param [clojure.lang.PersistentArrayMap]]
-                        ])
+                        [param [clojure.lang.PersistentArrayMap] void]])
 
-  (:import [org.antlr.v4.runtime ANTLRInputStream]
+  (:import [clojure.lang PersistentArrayMap]
+           [org.antlr.v4.runtime ANTLRInputStream]
            [org.antlr.v4.runtime CommonTokenStream]
            [jp.gr.java_conf.hangedman.html_template HTMLParser]
            [jp.gr.java_conf.hangedman.html_template HTMLLexer])
 
-  (:use [plumbing.core])
+  (:use [plumbing.core]
+        [clojure.tools.logging])
 
   (:require [clojure.java.io :as io]))
 
@@ -32,8 +33,12 @@
 ;;
 ;; param
 ;;
-(defn -param [this param] "")
-
+(defn -param [this param]
+  (debug (type param))
+  (cond
+    (string? param) "string"
+    ;;(= PersistentArrayMap (type param)) "map"
+    :else "map?"))
 
 
 ;; -------------------------------------------------------------------------------

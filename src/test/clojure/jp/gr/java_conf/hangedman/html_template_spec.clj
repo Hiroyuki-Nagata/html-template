@@ -2,6 +2,8 @@
   (:require
    [clojure.test :refer :all]
    [speclj.core :refer :all])
+  (:use
+   [clojure.tools.logging])
   (:import
    [jp.gr.java_conf.hangedman HtmlTemplate])
   )
@@ -21,8 +23,19 @@
                                           :option 'value'})))))
 
 (describe "Call param() return the value set to a param"
+
           (it "will return String at least"
-              (let [template (new HtmlTemplate {:filename 'dummy.tmpl'})]
-                (should (= String (type (.param template "")))))))
+              (let [template (new HtmlTemplate {:filename 'dummy.tmpl'})
+                    ret (.param template "PARAM")]
+                (debug ret)
+                (should (string? ret))))
+
+          (it "will return values to be configured"
+              (let [template (new HtmlTemplate {:filename 'dummy.tmpl'})
+                    ret (.param template {"PARAM" "value"})]
+                (debug ret)
+                (should (string? ret))))
+
+          )
 
 (run-specs)
