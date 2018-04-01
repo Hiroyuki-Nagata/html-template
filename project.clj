@@ -16,7 +16,8 @@
   :source-paths ["src/main/clojure"]
   :test-paths ["src/test/clojure"]
   :java-source-paths ["src/main/java"]
-  :resource-paths ["src/main/resources"]
+  :resource-paths ["src/main/resources"
+                   "src/test/resources"]
   :plugins [[lein-antlr "0.3.0"]
             [speclj "3.3.0"]]
   :antlr-src-dir "src/main/antlr"

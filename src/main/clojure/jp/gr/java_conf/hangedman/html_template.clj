@@ -4,7 +4,8 @@
               :state state
               :constructors {[clojure.lang.PersistentArrayMap] []}
               :methods [[param [String] String]
-                        [param [clojure.lang.PersistentArrayMap] void]])
+                        [param [clojure.lang.PersistentArrayMap] void]
+                        [output [] String]])
 
   (:import [clojure.lang PersistentArrayMap]
            [org.antlr.v4.runtime ANTLRInputStream]
@@ -29,6 +30,7 @@
 ;; ctor
 ;;
 (defnk -init [filename {option nil} {path nil} {utf8 nil}]
+  (debug (str "TEMPLATE: \n" (str filename)))
   [[] (atom {})])
 
 ;;
@@ -39,8 +41,13 @@
   (cond
     (string? param) (getfield this param)
     (map? param) (reduce-kv (fn [m k v] (setfield this k v)) {} param)
-    :else "map?"))
+    :else nil))
 
+;;
+;; output
+;;
+(defn -output [this]
+  "")
 
 ;; -------------------------------------------------------------------------------
 
