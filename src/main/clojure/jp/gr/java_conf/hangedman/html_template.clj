@@ -17,18 +17,19 @@
 
   (:require [clojure.java.io :as io]))
 
-(defmacro setfield
+(defn setfield
   [this key value]
-  `(swap! (.state ~this) into {~key ~value}))
+      (swap! (.state this) into {key value}))
 
-(defmacro getfield
+(defn getfield
   [this key]
-  `(@(.state ~this) ~key))
+  (@(.state this) key))
 
 ;;
 ;; ctor
 ;;
-(defnk -init [filename {option nil} {path nil} {utf8 nil}])
+(defnk -init [filename {option nil} {path nil} {utf8 nil}]
+  [[] (atom {})])
 
 ;;
 ;; param
@@ -36,8 +37,8 @@
 (defn -param [this param]
   (debug (type param))
   (cond
-    (string? param) "string"
-    ;;(= PersistentArrayMap (type param)) "map"
+    (string? param) (getfield this param)
+    (map? param) (reduce-kv (fn [m k v] (setfield this k v)) {} param)
     :else "map?"))
 
 

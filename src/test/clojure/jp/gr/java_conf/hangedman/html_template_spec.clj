@@ -24,18 +24,19 @@
 
 (describe "Call param() return the value set to a param"
 
-          (it "will return String at least"
+          (it "will return empty String if there is no setting"
               (let [template (new HtmlTemplate {:filename 'dummy.tmpl'})
                     ret (.param template "PARAM")]
                 (debug ret)
-                (should (string? ret))))
+                (should (nil? ret))))
 
           (it "will return values to be configured"
               (let [template (new HtmlTemplate {:filename 'dummy.tmpl'})
-                    ret (.param template {"PARAM" "value"})]
-                (debug ret)
-                (should (string? ret))))
-
+                    set-val (.param template {"PARAM" "value"})
+                    get-val (.param template "PARAM")]
+                (debug set-val)
+                (should (nil? set-val))
+                (should (= "value" get-val))))
           )
 
 (run-specs)
