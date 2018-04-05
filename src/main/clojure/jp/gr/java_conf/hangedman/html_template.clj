@@ -1,4 +1,8 @@
 (ns jp.gr.java_conf.hangedman.html_template
+  (:require
+   [clojure.java.io :as io]
+   [jp.gr.java_conf.hangedman.html_parser_base_listener])
+
   (:gen-class :name jp.gr.java_conf.hangedman.HtmlTemplate
               :init init
               :state state
@@ -7,16 +11,17 @@
                         [param [clojure.lang.PersistentArrayMap] void]
                         [output [] String]])
 
-  (:import [clojure.lang PersistentArrayMap]
-           [org.antlr.v4.runtime ANTLRInputStream]
-           [org.antlr.v4.runtime CommonTokenStream]
-           [jp.gr.java_conf.hangedman.html_template HTMLParser]
-           [jp.gr.java_conf.hangedman.html_template HTMLLexer])
+  (:import
+   [clojure.lang PersistentArrayMap]
+   [org.antlr.v4.runtime ANTLRInputStream]
+   [org.antlr.v4.runtime CommonTokenStream]
+   [jp.gr.java_conf.hangedman.html_template HTMLParser]
+   [jp.gr.java_conf.hangedman.html_template HTMLLexer]
+   [jp.gr.java_conf.hangedman HtmlParserBaseListener])
 
-  (:use [plumbing.core]
-        [clojure.tools.logging])
-
-  (:require [clojure.java.io :as io]))
+  (:use
+   [plumbing.core]
+   [clojure.tools.logging]))
 
 (defn setfield
   [this key value]
