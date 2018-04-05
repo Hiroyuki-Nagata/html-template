@@ -42,9 +42,11 @@
 
 (describe "Given a normal HTML file with a few extra tags, the simplest being <TMPL_VAR>"
 
-          (it "will be returned ..."
-              (let [template (new HtmlTemplate {:filename "test.tmpl"})])
-              )
+          (it "will return the HTML source as is if it's not configured any params"
+              (let [template (new HtmlTemplate {:filename "test.tmpl"})]
+                (debug (.output template))))
+
+
           )
 
 (run-specs)

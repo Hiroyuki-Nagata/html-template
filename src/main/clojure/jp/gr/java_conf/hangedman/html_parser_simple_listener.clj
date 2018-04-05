@@ -8,46 +8,86 @@
    [jp.gr.java_conf.hangedman.html_template HTMLParserListener])
 
   (:gen-class :name jp.gr.java_conf.hangedman.HtmlParserSimpleListener
-              :implements [jp.gr.java_conf.hangedman.html_template.HTMLParserListener])
+              :implements [jp.gr.java_conf.hangedman.html_template.HTMLParserListener]
+              :init init
+              :state state
+              :methods [[output [] String]])
 
   (:use
-   [clojure.tools.logging]))
+   [clojure.tools.logging]
+   [hiccup.core]))
 
-(defn -enterHtmlDocument [this ctx] (debug "enter HTML doc!"))
-(defn -exitHtmlDocument [ctx] (debug "exit HTML doc!"))
-(defn -enterHtmlElements [ctx])
-(defn -exitHtmlElements [ctx])
-(defn -enterHtmlElement [ctx])
-(defn -exitHtmlElement [ctx])
-(defn -enterHtmlContent [ctx])
-(defn -exitHtmlContent [ctx])
-(defn -enterHtmlAttribute [ctx])
-(defn -exitHtmlAttribute [ctx])
-(defn -enterHtmlAttributeName [ctx])
-(defn -exitHtmlAttributeName [ctx])
-(defn -enterHtmlAttributeValue [ctx])
-(defn -exitHtmlAttributeValue [ctx])
-(defn -enterHtmlTagName [ctx])
-(defn -exitHtmlTagName [ctx])
-(defn -enterHtmlChardata [ctx])
-(defn -exitHtmlChardata [ctx])
-(defn -enterHtmlMisc [ctx])
-(defn -exitHtmlMisc [ctx])
-(defn -enterHtmlComment [ctx])
-(defn -exitHtmlComment [ctx])
-(defn -enterXhtmlCDATA [ctx])
-(defn -exitXhtmlCDATA [ctx])
-(defn -enterDtd [ctx])
-(defn -exitDtd [ctx])
-(defn -enterXml [ctx])
-(defn -exitXml [ctx])
-(defn -enterScriptlet [ctx])
-(defn -exitScriptlet [ctx])
-(defn -enterScript [ctx])
-(defn -exitScript [ctx])
-(defn -enterStyle [ctx])
-(defn -exitStyle [ctx])
-(defn -enterEveryRule [ctx])
-(defn -exitEveryRule [ctx])
-(defn -visitTerminal [node])
-(defn -visitErrorNode [node])
+(defn setfield
+  [this key value]
+  (swap! (.state this) into {key value}))
+
+(defn getfield
+  [this key]
+  (@(.state this) key))
+
+(defn -init []
+  [[] (atom {:sexpr-html nil :cur-tag nil})])
+
+(defn -output [this]
+  ;; return HTML with hiccup
+  (debug (getfield this :sexpr-html))
+  (html (getfield this :sexpr-html)))
+
+(defn -enterHtmlDocument [this ctx])
+(defn -exitHtmlDocument [this ctx])
+(defn -enterHtmlElements [this ctx])
+(defn -exitHtmlElements [this ctx])
+(defn -enterHtmlElement [this ctx])
+(defn -exitHtmlElement [this ctx])
+(defn -enterHtmlContent [this ctx])
+(defn -exitHtmlContent [this ctx])
+(defn -enterHtmlAttribute [this ctx])
+(defn -exitHtmlAttribute [this ctx])
+
+(defn -enterHtmlAttributeName [this ctx]
+  (let [tag (.getText ctx)
+        tags (.getfield this ]
+    (debug (str "*** enter attr!: " tag))
+    (setfield this :cur-tag (symbol tag))
+    (debug (str "*** cur-tag:" (getfield this :cur-tag)))
+  ))
+
+(defn -exitHtmlAttributeName [this ctx]
+  (debug (str "*** exit attr!: " (.getText ctx)))
+  (debug (.toString (.TAG_NAME ctx))))
+
+(defn -enterHtmlAttributeValue [this ctx])
+(defn -exitHtmlAttributeValue [this ctx])
+
+(defn -enterHtmlTagName [this ctx]
+  (debug (str "*** enter html tag!: " (.getText ctx)))
+  (debug (.toString (.TAG_NAME ctx))))
+
+(defn -exitHtmlTagName [this ctx]
+  (debug (str "*** exit html tag!: " (.getText ctx)))
+  (debug (.toString (.TAG_NAME ctx))))
+
+(defn -enterHtmlChardata [this ctx])
+(defn -exitHtmlChardata [this ctx])
+(defn -enterHtmlMisc [this ctx])
+(defn -exitHtmlMisc [this ctx])
+(defn -enterHtmlComment [this ctx])
+(defn -exitHtmlComment [this ctx])
+(defn -enterXhtmlCDATA [this ctx])
+(defn -exitXhtmlCDATA [this ctx])
+(defn -enterDtd [this ctx])
+(defn -exitDtd [this ctx])
+(defn -enterXml [this ctx])
+(defn -exitXml [this ctx])
+(defn -enterScriptlet [this ctx])
+(defn -exitScriptlet [this ctx])
+(defn -enterScript [this ctx])
+(defn -exitScript [this ctx])
+(defn -enterStyle [this ctx])
+(defn -exitStyle [this ctx])
+
+(defn -enterEveryRule [this ctx])
+(defn -exitEveryRule [this ctx])
+
+(defn -visitTerminal [this node])
+(defn -visitErrorNode [this node])

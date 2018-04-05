@@ -15,6 +15,7 @@
    [clojure.lang PersistentArrayMap]
    [org.antlr.v4.runtime ANTLRInputStream]
    [org.antlr.v4.runtime CommonTokenStream]
+   [org.antlr.v4.runtime.tree ParseTreeWalker]
    [jp.gr.java_conf.hangedman.html_template HTMLParser]
    [jp.gr.java_conf.hangedman.html_template HTMLLexer]
    [jp.gr.java_conf.hangedman HtmlParserSimpleListener])
@@ -43,13 +44,19 @@
 (defn tokens [lexer]
   (new CommonTokenStream lexer))
 
+(defn walker []
+  (new ParseTreeWalker))
+
+(defn listener []
+  (new HtmlParserSimpleListener))
+
 (defn parse [elements]
   (let [stream (stream elements)
         lexer (html-lexer stream)
         tok (tokens lexer)
         parser (html-parser tok)
         ctx (.htmlDocument parser)]
-    (debug (.toStringTree ctx))))
+    {:stream stream :lexer lexer :token tok :parser parser :ctx ctx}))
 
 ;;
 ;; ctor
@@ -58,8 +65,7 @@
   (debug (str "TEMPLATE: \n" (str filename)))
   (let [contents (slurp (io/resource filename))]
     (debug contents)
-    (parse contents))
-  [[] (atom {})])
+    [[] (atom (parse contents))]))
 
 ;;
 ;; param
@@ -75,6 +81,10 @@
 ;; output
 ;;
 (defn -output [this]
-  "")
+  (let [ctx (getfield this :ctx)
+        w (walker)
+        l (listener)]
+    (.walk w l ctx)
+    (.output l)))
 
 ;; -------------------------------------------------------------------------------
