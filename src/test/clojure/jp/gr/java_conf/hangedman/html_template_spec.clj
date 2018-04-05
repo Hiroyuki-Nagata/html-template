@@ -43,7 +43,7 @@
 (describe "Given a normal HTML file with a few extra tags, the simplest being <TMPL_VAR>"
 
           (it "will return the HTML source as is if it's not configured any params"
-              (let [template (new HtmlTemplate {:filename "test.tmpl"})]
+              (let [template (new HtmlTemplate {:filename "repeat.tmpl"})]
                 (debug (.output template))))
 
 

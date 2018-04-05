@@ -1,6 +1,7 @@
 (ns jp.gr.java_conf.hangedman.html_template
   (:require
    [clojure.java.io :as io]
+   [clojure.zip :as zipper]
    [jp.gr.java_conf.hangedman.html_parser_simple_listener])
 
   (:gen-class :name jp.gr.java_conf.hangedman.HtmlTemplate
@@ -78,13 +79,36 @@
     :else nil))
 
 ;;
+;;
+;;
+(defn replace-several [content & replacements]
+  (let [replacement-list (partition 2 replacements)]
+    (reduce #(apply clojure.string/replace %1 %2) content replacement-list)))
+
+;;
 ;; output
 ;;
 (defn -output [this]
   (let [ctx (getfield this :ctx)
-        w (walker)
-        l (listener)]
-    (.walk w l ctx)
-    (.output l)))
+        parser (getfield this :parser)]
+
+    ;; convert s-expr
+    (let [raw-str (replace-several
+                   (.toStringTree ctx parser)
+                   #"html" ":html"
+                   #"<" ""
+                   #">" ""
+                   #"/" ""
+                   #"\(" "["
+                   #"\)" "]")
+          s-expr (read-string raw-str)
+          ;hiccup-expr (sexpr-to-hiccup s-expr)
+          ]
+      (clojure.pprint/pprint raw-str)
+      (clojure.pprint/pprint s-expr)
+      ;(clojure.pprint/pprint hiccup-expr))
+      )
+    ""))
+
 
 ;; -------------------------------------------------------------------------------

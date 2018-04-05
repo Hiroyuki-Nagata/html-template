@@ -1,4 +1,6 @@
 (ns jp.gr.java_conf.hangedman.html_parser_simple_listener
+  (:require [clojure.zip :as zipper])
+
   (:import
    [org.antlr.v4.runtime ParserRuleContext]
    [org.antlr.v4.runtime.misc NotNull]
@@ -28,9 +30,10 @@
 (defn -init []
   [[] (atom {:sexpr-html nil :cur-tag nil})])
 
-(defn -output [this]
+(defn -output
+  [this]
   ;; return HTML with hiccup
-  (debug (getfield this :sexpr-html))
+  (clojure.pprint/pprint (getfield this :sexpr-html))
   (html (getfield this :sexpr-html)))
 
 (defn -enterHtmlDocument [this ctx])
@@ -43,30 +46,12 @@
 (defn -exitHtmlContent [this ctx])
 (defn -enterHtmlAttribute [this ctx])
 (defn -exitHtmlAttribute [this ctx])
-
-(defn -enterHtmlAttributeName [this ctx]
-  (let [tag (.getText ctx)
-        tags (.getfield this ]
-    (debug (str "*** enter attr!: " tag))
-    (setfield this :cur-tag (symbol tag))
-    (debug (str "*** cur-tag:" (getfield this :cur-tag)))
-  ))
-
-(defn -exitHtmlAttributeName [this ctx]
-  (debug (str "*** exit attr!: " (.getText ctx)))
-  (debug (.toString (.TAG_NAME ctx))))
-
+(defn -enterHtmlAttributeName [this ctx])
+(defn -exitHtmlAttributeName [this ctx])
 (defn -enterHtmlAttributeValue [this ctx])
 (defn -exitHtmlAttributeValue [this ctx])
-
-(defn -enterHtmlTagName [this ctx]
-  (debug (str "*** enter html tag!: " (.getText ctx)))
-  (debug (.toString (.TAG_NAME ctx))))
-
-(defn -exitHtmlTagName [this ctx]
-  (debug (str "*** exit html tag!: " (.getText ctx)))
-  (debug (.toString (.TAG_NAME ctx))))
-
+(defn -enterHtmlTagName [this ctx])
+(defn -exitHtmlTagName [this ctx])
 (defn -enterHtmlChardata [this ctx])
 (defn -exitHtmlChardata [this ctx])
 (defn -enterHtmlMisc [this ctx])
@@ -88,6 +73,5 @@
 
 (defn -enterEveryRule [this ctx])
 (defn -exitEveryRule [this ctx])
-
 (defn -visitTerminal [this node])
 (defn -visitErrorNode [this node])
