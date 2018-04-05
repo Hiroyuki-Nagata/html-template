@@ -1,6 +1,6 @@
-# html-template
+# html-template [![Build Status](https://travis-ci.org/Hiroyuki-Nagata/html-template.svg?branch=master)](https://travis-ci.org/Hiroyuki-Nagata/html-template)
 
-FIXME: description
+Clojure's [HTML::Template](http://search.cpan.org/~samtregar/HTML-Template-2.97/lib/HTML/Template.pm) - Module to use HTML-like templating language
 
 ## Installation
 

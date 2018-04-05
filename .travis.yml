@@ -1,0 +1,16 @@
+language: clojure
+dist: trusty
+sudo: true
+lein: lein
+jdk: openjdk8
+
+before_script:
+  - lein antlr
+
+script:
+  - lein check
+  - lein test
+
+branches:
+  only:
+    - master
