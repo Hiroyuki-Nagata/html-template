@@ -5,7 +5,7 @@ lein: lein
 jdk: openjdk8
 
 before_script:
-  - lein antlr
+  - lein clean
 
 script:
   - lein check

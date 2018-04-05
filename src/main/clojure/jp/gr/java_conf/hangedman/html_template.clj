@@ -1,7 +1,7 @@
 (ns jp.gr.java_conf.hangedman.html_template
   (:require
    [clojure.java.io :as io]
-   [jp.gr.java_conf.hangedman.html_parser_base_listener])
+   [jp.gr.java_conf.hangedman.html_parser_simple_listener])
 
   (:gen-class :name jp.gr.java_conf.hangedman.HtmlTemplate
               :init init
@@ -17,7 +17,7 @@
    [org.antlr.v4.runtime CommonTokenStream]
    [jp.gr.java_conf.hangedman.html_template HTMLParser]
    [jp.gr.java_conf.hangedman.html_template HTMLLexer]
-   [jp.gr.java_conf.hangedman HtmlParserBaseListener])
+   [jp.gr.java_conf.hangedman HtmlParserSimpleListener])
 
   (:use
    [plumbing.core]
