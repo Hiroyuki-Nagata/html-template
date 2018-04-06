@@ -87,16 +87,20 @@
 (defn instaparse-transform [tree]
   (instaparse.core/transform
    {
-    :htmlChardata (fn [& args] (apply str args))
+    :htmlChardata (fn [& args] (apply clojure.string/join " " (list args)))
     :htmlTagName (fn [& args] (apply vector args))
-    ;:htmlContent (fn [& args] (apply vector (drop 1 args)))
-    ;:htmlMisc (fn [& args] (apply str args))
-    ;:htmlElement (fn
-    ;               [& args]
-    ;               (apply vec {
-    ;                           (keyword (ffirst args))
-    ;                           (clojure.string/replace (second args) #"\\" "")}))
 
+    ;; Get :htmlElement vector first value as HTML tag
+    ;; Get :htmlElement vector second value as HTML contents
+    ;; Remove :htmlContent vectors after processed above
+    :htmlElement (fn [& args] (do
+                                (let [tag (keyword (ffirst args))
+                                      raw-content (drop 1 (second args))
+                                      content (if (= 1 (count raw-content))
+                                                (first raw-content)
+                                                (list* raw-content))
+                                      ans (vector tag content)]
+                                  ans)))
     }
    tree))
 
