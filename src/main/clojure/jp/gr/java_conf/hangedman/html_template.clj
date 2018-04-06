@@ -23,6 +23,7 @@
    [jp.gr.java_conf.hangedman HtmlParserSimpleListener])
 
   (:use
+   [hiccup.core]
    [plumbing.core]
    [clojure.tools.logging]))
 
@@ -83,30 +84,20 @@
   (let [replacement-list (partition 2 replacements)]
     (reduce #(apply clojure.string/replace %1 %2) content replacement-list)))
 
-;; (defn trans [src depth dst]
-;;   (if (and (vector? src) (not (vector? (fnext src))))
-;;     (do
-;;       (let [tag (first src)
-;;             val (fnext src)]
-;;         (println (str "depth: " depth "," tag " = " val))
-;;         (cond (= :htmlTagName tag) (cons [val nil] dst)))
-;;       ))
-;;   dst)
-;;
-;; (defn recursive-transform [src depth dst]
-;;   (doseq [[idx item] (map-indexed vector src)]
-;;     (do
-;;       dst (trans item depth dst)
-;;       (if (vector? item)
-;;         (recursive-transform item (+ 1 depth) dst))
-;;       (- 1 depth)))
-;;   dst)
-
 (defn instaparse-transform [tree]
   (instaparse.core/transform
-   {:htmlTagName (fn [& args] (apply vector args))
+   {
     :htmlChardata (fn [& args] (apply str args))
-    :htmlMisc (fn [& args] (apply str args))}
+    :htmlTagName (fn [& args] (apply vector args))
+    ;:htmlContent (fn [& args] (apply vector (drop 1 args)))
+    ;:htmlMisc (fn [& args] (apply str args))
+    ;:htmlElement (fn
+    ;               [& args]
+    ;               (apply vec {
+    ;                           (keyword (ffirst args))
+    ;                           (clojure.string/replace (second args) #"\\" "")}))
+
+    }
    tree))
 
 ;;
@@ -120,18 +111,17 @@
     (let [raw-str (replace-several
                    (.toStringTree ctx parser)
                    #"html([a-zA-Z]+)" ":html$1"
+                   #"\\n" ""
                    #"<" ""
                    #">" ""
                    #"/" ""
                    #"\(" "["
                    #"\)" "]")
           s-expr (read-string raw-str)
-          hiccup-expr (instaparse-transform s-expr)]
+          hiccup-expr (instaparse-transform s-expr)
+          hatena (second (second hiccup-expr))]
       (clojure.pprint/pprint raw-str)
       (clojure.pprint/pprint s-expr)
       (clojure.pprint/pprint hiccup-expr)
-      )
-    ""))
-
-
-;; -------------------------------------------------------------------------------
+      (clojure.pprint/pprint hatena)
+      (html hatena))))
