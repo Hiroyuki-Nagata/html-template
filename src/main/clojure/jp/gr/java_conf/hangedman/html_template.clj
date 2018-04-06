@@ -1,5 +1,6 @@
 (ns jp.gr.java_conf.hangedman.html_template
   (:require
+   [instaparse.core]
    [clojure.java.io :as io]
    [clojure.zip :as zipper]
    [jp.gr.java_conf.hangedman.html_parser_simple_listener])
@@ -78,12 +79,35 @@
     (map? param) (reduce-kv (fn [m k v] (setfield this k v)) {} param)
     :else nil))
 
-;;
-;;
-;;
 (defn replace-several [content & replacements]
   (let [replacement-list (partition 2 replacements)]
     (reduce #(apply clojure.string/replace %1 %2) content replacement-list)))
+
+;; (defn trans [src depth dst]
+;;   (if (and (vector? src) (not (vector? (fnext src))))
+;;     (do
+;;       (let [tag (first src)
+;;             val (fnext src)]
+;;         (println (str "depth: " depth "," tag " = " val))
+;;         (cond (= :htmlTagName tag) (cons [val nil] dst)))
+;;       ))
+;;   dst)
+;;
+;; (defn recursive-transform [src depth dst]
+;;   (doseq [[idx item] (map-indexed vector src)]
+;;     (do
+;;       dst (trans item depth dst)
+;;       (if (vector? item)
+;;         (recursive-transform item (+ 1 depth) dst))
+;;       (- 1 depth)))
+;;   dst)
+
+(defn instaparse-transform [tree]
+  (instaparse.core/transform
+   {:htmlTagName (fn [& args] (apply vector args))
+    :htmlChardata (fn [& args] (apply str args))
+    :htmlMisc (fn [& args] (apply str args))}
+   tree))
 
 ;;
 ;; output
@@ -95,18 +119,17 @@
     ;; convert s-expr
     (let [raw-str (replace-several
                    (.toStringTree ctx parser)
-                   #"html" ":html"
+                   #"html([a-zA-Z]+)" ":html$1"
                    #"<" ""
                    #">" ""
                    #"/" ""
                    #"\(" "["
                    #"\)" "]")
           s-expr (read-string raw-str)
-          ;hiccup-expr (sexpr-to-hiccup s-expr)
-          ]
+          hiccup-expr (instaparse-transform s-expr)]
       (clojure.pprint/pprint raw-str)
       (clojure.pprint/pprint s-expr)
-      ;(clojure.pprint/pprint hiccup-expr))
+      (clojure.pprint/pprint hiccup-expr)
       )
     ""))
 

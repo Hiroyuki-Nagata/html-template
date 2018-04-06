@@ -10,7 +10,8 @@
                  [clj-antlr/clj-antlr "0.2.4"]
                  [prismatic/plumbing "0.5.5"]
                  [speclj/speclj "3.3.2"]
-                 [hiccup/hiccup "1.0.5"]]
+                 [hiccup/hiccup "1.0.5"]
+                 [instaparse "1.4.8"]]
   ;;:main ^:skip-aot jp.gr.java_conf.hangedman.html_template
   :aot [jp.gr.java_conf.hangedman.html_template]
   :target-path "target/%s"
