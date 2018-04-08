@@ -84,6 +84,64 @@
   (let [replacement-list (partition 2 replacements)]
     (reduce #(apply clojure.string/replace %1 %2) content replacement-list)))
 
+(defn filter-vec-keys [key contents]
+  (let [ans (filter
+             (fn [e] (and
+                      (vector? e)
+                      (= key (first e)))) contents)]
+  ;; return only vector values
+  (map (fn [v] (second v)) ans)))
+
+(defn make-kvmaps-from-list [name-list val-list]
+  (map hash-map
+       (map (fn [e] (keyword e)) name-list)
+       (map (fn [e] (str e)) val-list)))
+
+(defn make-hash-or-lazyseq [attr-seq]
+  (let [possible-name (nth attr-seq 0 nil)
+        possible-val  (nth attr-seq 2 nil)]
+
+    (if (and (= :htmlAttributeName (first possible-name))
+             (= :htmlAttributeValue (first possible-val)))
+      ;; replace attributes !
+      (do
+        (println (str "*** lazyseq? ***"))
+        (clojure.pprint/pprint possible-name)
+        (clojure.pprint/pprint possible-val)
+        (println (str "*** lazyseq! ***"))
+        {(keyword (second possible-name)) (second possible-val)})
+      ;; do nothing !
+      attr-seq)))
+
+(defn replace-attr-from-vec [tmp-content attr-map]
+  ;; (debug (str "type? " (type tmp-content)))
+  (if (seq? tmp-content)
+    ;; Get "clojure.lang.PersistentVector$ChunkedSeq"
+    (let [replaced-content (map
+                            (fn [e] (if (and (vector? e)
+                                             (seq? (nth e 1 nil)))
+                                      ;; vector!
+                                      (do
+                                        (let [tag (nth e 0 nil)
+                                              attr (nth e 1 nil)
+                                              new-attr (make-hash-or-lazyseq attr)]
+                                        (println "--- START ---")
+                                        (println (type e))
+                                        (clojure.pprint/pprint (str "element type: " e))
+                                        (clojure.pprint/pprint (str "[0]: " tag))
+                                        (clojure.pprint/pprint (str "[1]: " attr))
+                                        (println "--- TRANSFORMED ---")
+                                        (clojure.pprint/pprint (vector tag new-attr))
+                                        (println "---  END ---")
+                                        ;; update
+                                        (vector tag new-attr)))
+                                      ;; else
+                                      e))
+                            tmp-content)]
+    replaced-content)
+    ;; Other type
+    tmp-content))
+
 (defn instaparse-transform [tree]
   (instaparse.core/transform
    {
@@ -96,10 +154,18 @@
     :htmlElement (fn [& args] (do
                                 (let [tag (keyword (ffirst args))
                                       raw-content (drop 1 (second args))
-                                      content (if (= 1 (count raw-content))
-                                                (first raw-content)
-                                                (list* raw-content))
+                                      ;; Get attribute name/values
+                                      attr-names (filter-vec-keys :htmlAttributeName raw-content)
+                                      attr-vals (filter-vec-keys :htmlAttributeValue raw-content)
+                                      attr-map (make-kvmaps-from-list attr-names attr-vals)
+                                      ;; Remove :htmlContent vectors
+                                      tmp-content (if (= 1 (count raw-content))
+                                                    (first raw-content)
+                                                    (list* raw-content))
+                                      ;; Replace attributes with attr-maps
+                                      content (replace-attr-from-vec tmp-content attr-map)
                                       ans (vector tag content)]
+
                                   ans)))
     }
    tree))

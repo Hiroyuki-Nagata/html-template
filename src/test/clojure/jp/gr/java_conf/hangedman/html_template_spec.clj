@@ -48,6 +48,11 @@
                 (debug ans)
                 (should-not (nil? ans))))
 
+          (it "can process the HTML source containing attribute name & value"
+              (let [template (new HtmlTemplate {:filename "test.tmpl"})
+                    ans (.output template)]
+                (debug ans)
+                (should-not (nil? ans))))
 
           )
 
