@@ -50,6 +50,9 @@
 
           (it "can process the HTML source containing attribute name & value"
               (let [template (new HtmlTemplate {:filename "test.tmpl"})
+                    ;; fill in some parameters
+                    dummy (.param template {:HOME "/home/some/directory"})
+                    dummy (.param template {:PATH "/bin;/usr/bin"})
                     ans (.output template)]
                 (debug ans)
                 (should-not (nil? ans))))

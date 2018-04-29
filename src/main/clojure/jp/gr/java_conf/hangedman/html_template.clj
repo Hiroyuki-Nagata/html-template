@@ -29,11 +29,21 @@
 
 (defn setfield
   [this key value]
-      (swap! (.state this) into {key value}))
+  (swap! (.state this) into {key value}))
+
+;; (swap! ppl assoc-in ["persons" "bob"] {:age 11})
+
+(defn set-nestedfield
+  [this keys m]
+  (swap! (.state this) assoc-in keys m))
 
 (defn getfield
   [this key]
   (@(.state this) key))
+
+(defn get-nestedfield
+  [this keys]
+  (get-in @(.state this) keys))
 
 (defn stream [input]
   (new ANTLRInputStream input))
@@ -76,8 +86,8 @@
 (defn -param [this param]
   (debug (type param))
   (cond
-    (string? param) (getfield this param)
-    (map? param) (reduce-kv (fn [m k v] (setfield this k v)) {} param)
+    (string? param) (get-nestedfield this [:params param])
+    (map? param) (reduce-kv (fn [m k v] (set-nestedfield this [:params k] v)) {} param)
     :else nil))
 
 (defn replace-several [content & replacements]
@@ -105,10 +115,10 @@
              (= :htmlAttributeValue (first possible-val)))
       ;; replace attributes !
       (do
-        (println (str "*** lazyseq? ***"))
-        (clojure.pprint/pprint possible-name)
-        (clojure.pprint/pprint possible-val)
-        (println (str "*** lazyseq! ***"))
+        ;; (println (str "*** lazyseq? ***"))
+        ;; (clojure.pprint/pprint possible-name)
+        ;; (clojure.pprint/pprint possible-val)
+        ;; (println (str "*** lazyseq! ***"))
         {(keyword (second possible-name)) (second possible-val)})
       ;; do nothing !
       attr-seq)))
@@ -125,14 +135,14 @@
                                         (let [tag (nth e 0 nil)
                                               attr (nth e 1 nil)
                                               new-attr (make-hash-or-lazyseq attr)]
-                                        (println "--- START ---")
-                                        (println (type e))
-                                        (clojure.pprint/pprint (str "element type: " e))
-                                        (clojure.pprint/pprint (str "[0]: " tag))
-                                        (clojure.pprint/pprint (str "[1]: " attr))
-                                        (println "--- TRANSFORMED ---")
-                                        (clojure.pprint/pprint (vector tag new-attr))
-                                        (println "---  END ---")
+                                        ;; (println "--- START ---")
+                                        ;; (println (type e))
+                                        ;; (clojure.pprint/pprint (str "element type: " e))
+                                        ;; (clojure.pprint/pprint (str "[0]: " tag))
+                                        ;; (clojure.pprint/pprint (str "[1]: " attr))
+                                        ;; (println "--- TRANSFORMED ---")
+                                        ;; (clojure.pprint/pprint (vector tag new-attr))
+                                        ;; (println "---  END ---")
                                         ;; update
                                         (vector tag new-attr)))
                                       ;; else
@@ -189,9 +199,12 @@
                    #"\)" "]")
           s-expr (read-string raw-str)
           hiccup-expr (instaparse-transform s-expr)
+          params @(.state this)
           hatena (second (second hiccup-expr))]
-      (clojure.pprint/pprint raw-str)
-      (clojure.pprint/pprint s-expr)
-      (clojure.pprint/pprint hiccup-expr)
-      (clojure.pprint/pprint hatena)
+      ;; (clojure.pprint/pprint raw-str)
+      ;; (clojure.pprint/pprint s-expr)
+      ;; (clojure.pprint/pprint hiccup-expr)
+      ;; (clojure.pprint/pprint hatena)
+
+      (clojure.pprint/pprint params)
       (html hatena))))
