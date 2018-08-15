@@ -2,7 +2,8 @@
   (:require
    [clojure.test :refer :all]
    [speclj.core :refer :all]
-   [clojure.java.io :as io])
+   [clojure.java.io :as io]
+   [jp.gr.java_conf.hangedman.html_template :as html_template])
   (:use
    [clojure.tools.logging])
   (:import
@@ -12,48 +13,28 @@
 ;;
 ;; ctor
 ;;
-(describe "Call new() to create a new Template object"
-          (it "will return a instance (with a single template file)"
-              (should (instance?
-                       HtmlTemplate
-                       (new HtmlTemplate {:filename "test.tmpl"}))))
-          (it "will return a instance (with some params)"
-              (should (instance?
-                       HtmlTemplate
-                       (new HtmlTemplate {:filename "test.tmpl"
-                                          :option 'value'})))))
+(describe "HTML to AST"
+          (it "test")
 
-(describe "Call param() return the value set to a param"
+          (def html "<html>
+  <head><title>Test Template</title></head>
+  <body>
+  My Home Directory is <TMPL_VAR NAME=HOME>
+  <p>
+  My Path is set to <TMPL_VAR NAME=PATH>
+  </body>
+  </html>")
 
-          (it "will return empty String if there is no setting"
-              (let [template (new HtmlTemplate {:filename "test.tmpl"})
-                    ret (.param template "PARAM")]
-                (debug ret)
-                (should (nil? ret))))
+          (let [antlr-obj (html_template/parse html)
+                ctx (:ctx antlr-obj)
+                parser (:parser antlr-obj)
+                raw-str(.toStringTree ctx parser)
+                s-expr (read-string raw-str)
+                ]
 
-          (it "will return values to be configured"
-              (let [template (new HtmlTemplate {:filename "test.tmpl"})
-                    set-val (.param template {"PARAM" "value"})
-                    get-val (.param template "PARAM")]
-                (debug set-val)
-                (should (nil? set-val))
-                (should (= "value" get-val))))
-          )
+            (clojure.pprint/pprint s-expr)
 
-(describe "Given a normal HTML file with a few extra tags, the simplest being <TMPL_VAR>"
-
-          (it "will return the HTML source as is if it's not configured any params"
-              (let [template (new HtmlTemplate {:filename "repeat.tmpl"})
-                    ans (.output template)]
-                (debug ans)
-                (should-not (nil? ans))))
-
-          (it "can process the HTML source containing attribute name & value"
-              (let [template (new HtmlTemplate {:filename "test.tmpl"})
-                    ans (.output template)]
-                (debug ans)
-                (should-not (nil? ans))))
-
-          )
+            true
+            ))
 
 (run-specs)
