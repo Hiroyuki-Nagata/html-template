@@ -5,18 +5,24 @@
    [clojure.java.io :as io]
    [jp.gr.java_conf.hangedman.html_template :as html_template])
   (:use
-   [clojure.tools.logging])
+   [clojure.tools.logging]
+   [hickory.core]
+   [hickory.render])
   (:import
    [jp.gr.java_conf.hangedman HtmlTemplate])
   )
 
+(defn replace-several [content & replacements]
+  (let [replacement-list (partition 2 replacements)]
+    (reduce #(apply clojure.string/replace %1 %2) content replacement-list)))
+
 ;;
 ;; ctor
 ;;
-(describe "HTML to AST"
-          (it "test")
+(describe "HTML to hickory parsed tree"
+          (it "can convert with specified arguments for replacement"
 
-          (def html "<html>
+              (def in-html "<html>
   <head><title>Test Template</title></head>
   <body>
   My Home Directory is <TMPL_VAR NAME=HOME>
@@ -25,16 +31,23 @@
   </body>
   </html>")
 
-          (let [antlr-obj (html_template/parse html)
-                ctx (:ctx antlr-obj)
-                parser (:parser antlr-obj)
-                raw-str(.toStringTree ctx parser)
-                s-expr (read-string raw-str)
-                ]
+              (def expect-html "<html>
+  <head><title>Test Template</title></head>
+  <body>
+  My Home Directory is /home/some/directory
+  <p>
+  My Path is set to /bin;/usr/bin
+  </body>
+  </html>")
 
-            (clojure.pprint/pprint s-expr)
+              (let [parsed-doc (parse in-html)
+                    hickory-doc (as-hickory parsed-doc)
+                    hickory-html (hickory-to-html hickory-doc)]
 
-            true
-            ))
+                (clojure.pprint/pprint in-html)
+                (clojure.pprint/pprint hickory-html)
+
+                (= expect-html hickory-html)
+                )))
 
 (run-specs)
