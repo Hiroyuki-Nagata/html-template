@@ -59,3 +59,7 @@
         parser (html-parser tok)
         ctx (.htmlDocument parser)]
     {:stream stream :lexer lexer :token tok :parser parser :ctx ctx}))
+
+(defn output [params hickory-doc]
+
+  hickory-doc)

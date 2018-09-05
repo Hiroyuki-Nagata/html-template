@@ -42,12 +42,14 @@
 
               (let [parsed-doc (parse in-html)
                     hickory-doc (as-hickory parsed-doc)
-                    hickory-html (hickory-to-html hickory-doc)]
+                    replaced-doc (html_template/output {} hickory-doc)
+                    hickory-html (hickory-to-html replaced-doc)]
 
-                (clojure.pprint/pprint in-html)
-                (clojure.pprint/pprint hickory-html)
+                (clojure.pprint/pprint expect-html)
 
-                (= expect-html hickory-html)
+                (clojure.pprint/pprint replaced-doc)
+
+                (should (= expect-html hickory-html))
                 )))
 
 (run-specs)
